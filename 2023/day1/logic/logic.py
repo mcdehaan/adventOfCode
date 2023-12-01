@@ -63,38 +63,41 @@ def replace_words_with_numbers(input_lines):
     return final_result_lines
 
 
+def convert_string_to_number(input_string):
+    for string in input_string:
+        try:
+            # Try converting to an integer
+            return int(string)
+        except ValueError:
+            print("String to Int conversion error")
+            return string
+
+
+def find_first_digit(input_line):
+    print("\n")
+    # Use regular expression to find the first digit
+    match = re.search(r'\d', input_line)
+    if match:
+        print(f"First digit in '{input_line}' is '{match.group()}' at position {match.start()}.")
+        return convert_string_to_number(match.group())
+    else:
+        print(f"No digit found in '{input_line}'.")
+
+
+def find_last_digit(input_line):
+    # Use regular expression to find the last digit
+    match = re.search(r'\d(?![\d\S]*\d)', input_line)
+    if match:
+        print(f"Last digit in '{input_line}' is '{match.group()}' at position {match.start()}.")
+        return convert_string_to_number(match.group())
+    else:
+        print(f"No digit found in '{input_line}'.")
+
+
 def extract_numbers(input_lines):
     digit_lines = []
     # convert words to numbers before extracting them
     converted_lines = replace_words_with_numbers(input_lines)
-
-    def convert_string_to_number(input_string):
-        for string in input_string:
-            try:
-                # Try converting to an integer
-                return int(string)
-            except ValueError:
-                print("String to Int conversion error")
-                return string
-
-    def find_first_digit(input_line):
-        print("\n")
-        # Use regular expression to find the first digit
-        match = re.search(r'\d', input_line)
-        if match:
-            print(f"First digit in '{input_line}' is '{match.group()}' at position {match.start()}.")
-            return convert_string_to_number(match.group())
-        else:
-            print(f"No digit found in '{input_line}'.")
-
-    def find_last_digit(input_line):
-        # Use regular expression to find the last digit
-        match = re.search(r'\d(?![\d\S]*\d)', input_line)
-        if match:
-            print(f"Last digit in '{input_line}' is '{match.group()}' at position {match.start()}.")
-            return convert_string_to_number(match.group())
-        else:
-            print(f"No digit found in '{input_line}'.")
 
     for line in converted_lines:
         first_digit = find_first_digit(line)
