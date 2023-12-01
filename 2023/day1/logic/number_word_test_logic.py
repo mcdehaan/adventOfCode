@@ -1,7 +1,7 @@
 import re
 import unittest
 
-from number_word_logic import (
+from logic.number_word_logic import (
     replace_match,
     replace_first_word_with_number,
     replace_last_word_with_number

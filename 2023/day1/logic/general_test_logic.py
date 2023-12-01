@@ -1,6 +1,6 @@
 import unittest
 
-from general_logic import (
+from logic.general_logic import (
     read_file_lines,
     convert_string_to_number,
     find_first_digit,
