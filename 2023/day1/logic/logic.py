@@ -33,6 +33,8 @@ def replace_words_with_numbers(input_lines):
     print("\n")
     # Loop to replace each first number word
     for line in input_lines:
+
+        # Function to do the actual replacement
         def replace_match(match):
             word = match.group(0)
             return words_numbers.get(word, word)

@@ -1,5 +1,13 @@
 import unittest
-from logic import read_file_lines, extract_numbers, add_all_numbers, replace_words_with_numbers
+from logic import (
+    read_file_lines,
+    replace_words_with_numbers,
+    convert_string_to_number,
+    find_first_digit,
+    find_last_digit,
+    extract_numbers,
+    add_all_numbers,
+)
 
 
 class TestLogicFunctions(unittest.TestCase):
@@ -43,6 +51,27 @@ class TestLogicFunctions(unittest.TestCase):
         print(f"\nTest result: {results}")
         self.assertEqual(results, expected_results)
 
+    def test_convert_string_to_number(self):
+        results = convert_string_to_number("2")
+        expected_result = 2
+        print(f"\nExpected result: {expected_result}")
+        print(f"Test result: {results}")
+        self.assertEqual(results, expected_result)
+
+    def test_find_first_digit(self):
+        result = find_first_digit("two91nine")
+        expected_result = 9
+        print(f"\nExpected result: {expected_result}")
+        print(f"\nTest result: {result}")
+        self.assertEqual(result, expected_result)
+
+    def test_find_last_digit(self):
+        result = find_last_digit("two91nine")
+        expected_result = 1
+        print(f"\nExpected result: {expected_result}")
+        print(f"\nTest result: {result}")
+        self.assertEqual(result, expected_result)
+
     def test_extract_numbers(self):
         test_cases = [
             'two1nine',
@@ -65,7 +94,7 @@ class TestLogicFunctions(unittest.TestCase):
         test_cases = [
             29, 83, 13, 24, 42, 14, 76
         ]
-        expected_total = 182
+        expected_total = 281
         print(f"\nExpected result = {expected_total}")
 
         result = add_all_numbers(test_cases)
