@@ -1,4 +1,4 @@
-from logic.logic import read_file_lines, extract_numbers, add_all_numbers
+from logic.logic import read_file_lines, extract_numbers, add_all_numbers, replace_words_with_numbers
 
 if __name__ == '__main__':
     lines = read_file_lines('input.txt')

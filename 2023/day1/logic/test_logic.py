@@ -1,23 +1,60 @@
 import unittest
-from logic import read_file_lines, extract_numbers, add_all_numbers
+from logic import read_file_lines, extract_numbers, add_all_numbers, replace_words_with_numbers
 
 
 class TestLogicFunctions(unittest.TestCase):
 
     def test_read_read_file_lines(self):
         content = read_file_lines('test_input.txt')
-        self.assertEqual(content, ['1abc2', 'pqr3stu8vwx', 'a1b2c3d4e5f', 'treb7uchet'])
+        self.assertEqual(content, [
+            'two1nine',
+            'eightwothree',
+            'abcone2threexyz',
+            'xtwone3four',
+            '4nineeightseven2',
+            'zoneight234',
+            '7pqrstsixteen'
+        ])
 
     def test_read_read_file_error(self):
         content = read_file_lines('doesNotExist.txt')
         self.assertEqual(content, [])
 
-    def test_extract_digits(self):
-        test_cases = [
-            "1abc2", "pqr3stu8vwx", "a1b2c3d4e5f", "treb7uchet"
+    def test_replace_words_with_numbers(self):
+        test_lines = [
+            'two1nine',
+            'eightwothree',
+            'abcone2threexyz',
+            'xtwone3four',
+            '4nineeightseven2',
+            'zoneight234',
+            '7pqrstsixteen'
         ]
         expected_results = [
-            12, 38, 15, 77
+            '219',
+            '8wo3',
+            'abc123xyz',
+            'x2ne34',
+            '49eight72',
+            'z1ight234',
+            '7pqrst6teen'
+        ]
+        results = replace_words_with_numbers(test_lines)
+        print(f"\nTest result: {results}")
+        self.assertEqual(results, expected_results)
+
+    def test_extract_numbers(self):
+        test_cases = [
+            'two1nine',
+            'eightwothree',
+            'abcone2threexyz',
+            'xtwone3four',
+            '4nineeightseven2',
+            'zoneight234',
+            '7pqrstsixteen'
+        ]
+        expected_results = [
+            29, 83, 13, 24, 42, 14, 76
         ]
 
         results = extract_numbers(test_cases)
@@ -26,9 +63,9 @@ class TestLogicFunctions(unittest.TestCase):
 
     def test_add_all_numbers(self):
         test_cases = [
-            12, 38, 15, 77
+            29, 83, 13, 24, 42, 14, 76
         ]
-        expected_total = 142
+        expected_total = 182
         print(f"\nExpected result = {expected_total}")
 
         result = add_all_numbers(test_cases)
