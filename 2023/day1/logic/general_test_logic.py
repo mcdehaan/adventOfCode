@@ -1,7 +1,7 @@
 import unittest
-from logic import (
+
+from general_logic import (
     read_file_lines,
-    replace_words_with_numbers,
     convert_string_to_number,
     find_first_digit,
     find_last_digit,
@@ -28,29 +28,6 @@ class TestLogicFunctions(unittest.TestCase):
         content = read_file_lines('doesNotExist.txt')
         self.assertEqual(content, [])
 
-    def test_replace_words_with_numbers(self):
-        test_lines = [
-            'two1nine',
-            'eightwothree',
-            'abcone2threexyz',
-            'xtwone3four',
-            '4nineeightseven2',
-            'zoneight234',
-            '7pqrstsixteen'
-        ]
-        expected_results = [
-            '219',
-            '8wo3',
-            'abc123xyz',
-            'x2ne34',
-            '49eight72',
-            'z1ight234',
-            '7pqrst6teen'
-        ]
-        results = replace_words_with_numbers(test_lines)
-        print(f"\nTest result: {results}")
-        self.assertEqual(results, expected_results)
-
     def test_convert_string_to_number(self):
         results = convert_string_to_number("2")
         expected_result = 2
@@ -59,18 +36,18 @@ class TestLogicFunctions(unittest.TestCase):
         self.assertEqual(results, expected_result)
 
     def test_find_first_digit(self):
-        result = find_first_digit("two91nine")
-        expected_result = 9
+        result = find_first_digit("two91four")
+        expected_result = 2
         print(f"\nExpected result: {expected_result}")
         print(f"\nTest result: {result}")
-        self.assertEqual(result, expected_result)
+        self.assertEqual(expected_result, result)
 
     def test_find_last_digit(self):
-        result = find_last_digit("two91nine")
-        expected_result = 1
+        result = find_last_digit("two91four")
+        expected_result = 4
         print(f"\nExpected result: {expected_result}")
         print(f"\nTest result: {result}")
-        self.assertEqual(result, expected_result)
+        self.assertEqual(expected_result, result)
 
     def test_extract_numbers(self):
         test_cases = [
