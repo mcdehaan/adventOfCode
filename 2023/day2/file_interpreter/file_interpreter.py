@@ -34,3 +34,13 @@ def interpret_file_line(line):
         game_results.append([{color: 0 for color in colors}])
 
     return {game_number: game_results}
+
+
+def interpret_file_lines(lines):
+    result_lines = []
+
+    for line in lines:
+        result_line = interpret_file_line(line)
+        result_lines.append(result_line)
+
+    return result_lines

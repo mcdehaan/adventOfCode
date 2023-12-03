@@ -1,7 +1,3 @@
-import re
-
-from logic.number_word_logic import replace_first_word_with_number, replace_last_word_with_number
-
 
 def read_file(path):
     try:
