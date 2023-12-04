@@ -1,39 +1,37 @@
 import unittest
-
-from file_interpreter import (
-    interpret_file_line, interpret_file_lines
-)
+from global_types.colors_enum import Colors 
+from file_interpreter import interpret_file_line, interpret_file_lines
 
 
-class TestLogicFunctions(unittest.TestCase):
+class TestFileInterpreterFunctions(unittest.TestCase):
 
     def test_interpret_file_line(self):
         test_cases = [
             ('Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green',
              {1: [
-                 [{'blue': 3, 'green': 0, 'red': 4}],
-                 [{'blue': 6, 'green': 2, 'red': 1}],
-                 [{'blue': 0, 'green': 2, 'red': 0}]]}),
+                 [{Colors.BLUE.name: 3, Colors.GREEN.name: 0, Colors.RED.name: 4}],
+                 [{Colors.BLUE.name: 6, Colors.GREEN.name: 2, Colors.RED.name: 1}],
+                 [{Colors.BLUE.name: 0, Colors.GREEN.name: 2, Colors.RED.name: 0}]]}),
             ('Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue',
              {2: [
-                 [{'blue': 1, 'green': 2, 'red': 0}],
-                 [{'blue': 4, 'green': 3, 'red': 1}],
-                 [{'blue': 1, 'green': 1, 'red': 0}]]}),
+                 [{Colors.BLUE.name: 1, Colors.GREEN.name: 2, Colors.RED.name: 0}],
+                 [{Colors.BLUE.name: 4, Colors.GREEN.name: 3, Colors.RED.name: 1}],
+                 [{Colors.BLUE.name: 1, Colors.GREEN.name: 1, Colors.RED.name: 0}]]}),
             ('Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red',
              {3: [
-                 [{'blue': 6, 'green': 8, 'red': 20}],
-                 [{'blue': 5, 'green': 13, 'red': 4}],
-                 [{'blue': 0, 'green': 5, 'red': 1}]]}),
+                 [{Colors.BLUE.name: 6, Colors.GREEN.name: 8, Colors.RED.name: 20}],
+                 [{Colors.BLUE.name: 5, Colors.GREEN.name: 13, Colors.RED.name: 4}],
+                 [{Colors.BLUE.name: 0, Colors.GREEN.name: 5, Colors.RED.name: 1}]]}),
             ('Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red',
              {4: [
-                 [{'blue': 6, 'green': 1, 'red': 3}],
-                 [{'blue': 0, 'green': 3, 'red': 6}],
-                 [{'blue': 15, 'green': 3, 'red': 14}]]}),
+                 [{Colors.BLUE.name: 6, Colors.GREEN.name: 1, Colors.RED.name: 3}],
+                 [{Colors.BLUE.name: 0, Colors.GREEN.name: 3, Colors.RED.name: 6}],
+                 [{Colors.BLUE.name: 15, Colors.GREEN.name: 3, Colors.RED.name: 14}]]}),
             ('Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green',
              {5: [
-                 [{'blue': 1, 'green': 3, 'red': 6}],
-                 [{'blue': 2, 'green': 2, 'red': 1}],
-                 [{'blue': 0, 'green': 0, 'red': 0}]]})
+                 [{Colors.BLUE.name: 1, Colors.GREEN.name: 3, Colors.RED.name: 6}],
+                 [{Colors.BLUE.name: 2, Colors.GREEN.name: 2, Colors.RED.name: 1}],
+                 [{Colors.BLUE.name: 0, Colors.GREEN.name: 0, Colors.RED.name: 0}]]})
         ]
         for input_string, expected_result in test_cases:
             result = interpret_file_line(input_string)
@@ -49,25 +47,25 @@ class TestLogicFunctions(unittest.TestCase):
         ]
         expected_result = [
             {1: [
-                 [{'blue': 3, 'green': 0, 'red': 4}],
-                 [{'blue': 6, 'green': 2, 'red': 1}],
-                 [{'blue': 0, 'green': 2, 'red': 0}]]},
+                 [{Colors.BLUE.name: 3, Colors.GREEN.name: 0, Colors.RED.name: 4}],
+                 [{Colors.BLUE.name: 6, Colors.GREEN.name: 2, Colors.RED.name: 1}],
+                 [{Colors.BLUE.name: 0, Colors.GREEN.name: 2, Colors.RED.name: 0}]]},
             {2: [
-                [{'blue': 1, 'green': 2, 'red': 0}],
-                [{'blue': 4, 'green': 3, 'red': 1}],
-                [{'blue': 1, 'green': 1, 'red': 0}]]},
+                [{Colors.BLUE.name: 1, Colors.GREEN.name: 2, Colors.RED.name: 0}],
+                [{Colors.BLUE.name: 4, Colors.GREEN.name: 3, Colors.RED.name: 1}],
+                [{Colors.BLUE.name: 1, Colors.GREEN.name: 1, Colors.RED.name: 0}]]},
             {3: [
-                [{'blue': 6, 'green': 8, 'red': 20}],
-                [{'blue': 5, 'green': 13, 'red': 4}],
-                [{'blue': 0, 'green': 5, 'red': 1}]]},
+                [{Colors.BLUE.name: 6, Colors.GREEN.name: 8, Colors.RED.name: 20}],
+                [{Colors.BLUE.name: 5, Colors.GREEN.name: 13, Colors.RED.name: 4}],
+                [{Colors.BLUE.name: 0, Colors.GREEN.name: 5, Colors.RED.name: 1}]]},
             {4: [
-                 [{'blue': 6, 'green': 1, 'red': 3}],
-                 [{'blue': 0, 'green': 3, 'red': 6}],
-                 [{'blue': 15, 'green': 3, 'red': 14}]]},
+                 [{Colors.BLUE.name: 6, Colors.GREEN.name: 1, Colors.RED.name: 3}],
+                 [{Colors.BLUE.name: 0, Colors.GREEN.name: 3, Colors.RED.name: 6}],
+                 [{Colors.BLUE.name: 15, Colors.GREEN.name: 3, Colors.RED.name: 14}]]},
             {5: [
-                 [{'blue': 1, 'green': 3, 'red': 6}],
-                 [{'blue': 2, 'green': 2, 'red': 1}],
-                 [{'blue': 0, 'green': 0, 'red': 0}]]}
+                 [{Colors.BLUE.name: 1, Colors.GREEN.name: 3, Colors.RED.name: 6}],
+                 [{Colors.BLUE.name: 2, Colors.GREEN.name: 2, Colors.RED.name: 1}],
+                 [{Colors.BLUE.name: 0, Colors.GREEN.name: 0, Colors.RED.name: 0}]]}
         ]
         result = interpret_file_lines(input_lines)
         self.assertEqual(expected_result, result)

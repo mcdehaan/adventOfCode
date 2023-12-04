@@ -1,11 +1,8 @@
 import unittest
-
-from file_reader import (
-    read_file
-)
+from file_reader import read_file
 
 
-class TestLogicFunctions(unittest.TestCase):
+class TestFileReaderFunctions(unittest.TestCase):
 
     def test_read_read_file_lines(self):
         expected_result = [
