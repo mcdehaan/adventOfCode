@@ -1,6 +1,6 @@
 import unittest
 
-from grid_interpreter import find_symbols, find_numbers, find_full_numbers, extract_full_number
+from grid_interpreter import find_symbols, find_numbers, find_full_numbers, extract_full_number, find_all_gears
 
 input_grid = [
     ['4', '6', '7', '.', '.', '1', '1', '4', '.', '.'],
@@ -28,6 +28,11 @@ class TestGridInterpreterFunctions(unittest.TestCase):
                            (4, 0), (4, 1), (4, 2), (5, 7), (5, 8), (6, 2), (6, 3), (6, 4), (7, 6), (7, 7), (7, 8),
                            (9, 1), (9, 2), (9, 3), (9, 5), (9, 6), (9, 7)]
         result = find_numbers(input_grid)
+        self.assertEqual(expected_result, result)
+
+    def test_find_all_gears(self):
+        expected_result = [(1, 3), (4, 3), (8, 5)]
+        result = find_all_gears(input_grid)
         self.assertEqual(expected_result, result)
 
     def test_extract_full_number(self):

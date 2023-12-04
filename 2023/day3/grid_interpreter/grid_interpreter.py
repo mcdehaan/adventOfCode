@@ -18,6 +18,15 @@ def find_numbers(input_grid):
     return number_coords
 
 
+def find_all_gears(input_grid):
+    gear_coords = []
+    for row_index, row in enumerate(input_grid):
+        for col_index, item in enumerate(row):
+            if item == '*':
+                gear_coords.append((row_index, col_index))
+    return gear_coords
+
+
 def extract_full_number(grid, row, col):
     number = ''
     coords_list = []
