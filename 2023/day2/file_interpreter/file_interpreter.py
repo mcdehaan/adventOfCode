@@ -1,11 +1,9 @@
 from collections import defaultdict
+from global_types.colors_enum import Colors
 
 
 def interpret_file_line(line):
     game_results = []
-
-    # Enum for colors
-    colors = ['red', 'green', 'blue']
 
     # Extract game number and scores
     game_number, colors_str = line.split(': ')
@@ -23,15 +21,18 @@ def interpret_file_line(line):
         color_amount_pairs = segment.split(', ')
         for pair in color_amount_pairs:
             if pair:
-                score, color = pair.split(' ')
-                color_amounts[color] = int(score)
+                score, color_str = pair.split(' ')
+                # Convert color string to enum if it exists in the enum, otherwise skip
+                color = next((c for c in Colors if c.value == color_str), None)
+                if color is not None:
+                    color_amounts[color] = int(score)
 
         # Convert the default-dict to a list of color-score pairs
-        game_results.append([{color: color_amounts[color] for color in colors}])
+        game_results.append([{color.name: color_amounts[color] for color in Colors}])
 
     # Ensure each game has three items
     while len(game_results) < 3:
-        game_results.append([{color: 0 for color in colors}])
+        game_results.append([{color.name: 0 for color in Colors}])
 
     return {game_number: game_results}
 
