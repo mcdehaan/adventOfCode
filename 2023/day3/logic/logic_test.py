@@ -1,97 +1,89 @@
 import unittest
 
-from global_types.colors_enum import Colors
-from logic import verify_result, verify_results, calculate_minimum_colors, calculate_game_power
+from logic import (check_symbol_adjacency,
+                   check_adjacency_for_number_with_coordinates,
+                   check_adjacency_for_numbers_with_coordinates,
+                   add_qualified_numbers)
 
 
-class TestGameLogicFunctions(unittest.TestCase):
+class TestLogicFunctions(unittest.TestCase):
+    def test_check_adjacent_symbols_success(self):
+        number_coordinates = [(2, 6), (2, 7), (2, 8)]
+        symbol_coordinates = [(0, 0), (0, 1), (3, 9)]
 
-    def test_possible_game(self):
-        game_data = {1:
-            [
-                [{Colors.BLUE.name: 6, Colors.GREEN.name: 8, Colors.RED.name: 20}],
-                [{Colors.BLUE.name: 0, Colors.GREEN.name: 12, Colors.RED.name: 4}],
-                [{Colors.BLUE.name: 30, Colors.GREEN.name: 5, Colors.RED.name: 1}]
-            ]}
-        color_limits = {Colors.BLUE.name: 30, Colors.GREEN.name: 12, Colors.RED.name: 20}
-        game_result = verify_result(game_data, color_limits)
-        self.assertEqual(game_result, True)
+        expected_result = True
+        result = check_symbol_adjacency(number_coordinates, symbol_coordinates)
 
-    def test_impossible_game(self):
-        game_data = {1:
-            [
-                [{Colors.BLUE.name: 6, Colors.GREEN.name: 8, Colors.RED.name: 20}],
-                [{Colors.BLUE.name: 5, Colors.GREEN.name: 13, Colors.RED.name: 4}],
-                [{Colors.BLUE.name: 0, Colors.GREEN.name: 5, Colors.RED.name: 1}]
-            ]}
-        color_limits = {Colors.BLUE.name: 30, Colors.GREEN.name: 12, Colors.RED.name: 20}
-        game_result = verify_result(game_data, color_limits)
-        self.assertEqual(game_result, False)
+        self.assertEqual(expected_result, result)
 
-    def test_possible_games(self):
-        games_data = [
-            {1: [
-                [{Colors.BLUE.name: 3, Colors.GREEN.name: 0, Colors.RED.name: 4}],
-                [{Colors.BLUE.name: 6, Colors.GREEN.name: 2, Colors.RED.name: 1}],
-                [{Colors.BLUE.name: 0, Colors.GREEN.name: 2, Colors.RED.name: 0}]]},
-            {2: [
-                [{Colors.BLUE.name: 1, Colors.GREEN.name: 2, Colors.RED.name: 0}],
-                [{Colors.BLUE.name: 4, Colors.GREEN.name: 3, Colors.RED.name: 1}],
-                [{Colors.BLUE.name: 1, Colors.GREEN.name: 1, Colors.RED.name: 0}]]}
+    def test_check_adjacent_symbols_failed(self):
+        number_coordinates = [(2, 6), (2, 7), (2, 8)]
+        symbol_coordinates = [(0, 0), (0, 1), (4, 9)]
+
+        expected_result = False
+        result = check_symbol_adjacency(number_coordinates, symbol_coordinates)
+
+        self.assertEqual(expected_result, result)
+
+    def test_adjacency_for_number_with_coordinates_failed(self):
+        number_with_coordinates = {'number': '598', 'coordinates': [(9, 5), (9, 6), (9, 7)]}
+        symbol_coordinates = [(0, 0), (0, 1), (4, 9)]
+
+        expected_result = False
+        result = check_adjacency_for_number_with_coordinates(number_with_coordinates, symbol_coordinates)
+
+        self.assertEqual(expected_result, result)
+
+    def test_adjacency_for_number_with_coordinates_success(self):
+        number_with_coordinates = {'number': '598', 'coordinates': [(9, 5), (9, 6), (9, 7)]}
+        symbol_coordinates = [(0, 0), (0, 1), (8, 8)]
+
+        expected_result = True
+        result = check_adjacency_for_number_with_coordinates(number_with_coordinates, symbol_coordinates)
+
+        self.assertEqual(expected_result, result)
+
+    def test_adjacency_for_numbers_with_coordinates(self):
+        numbers_with_coordinates = [
+            {'number': '467', 'coordinates': [(0, 0), (0, 1), (0, 2)]},
+            {'number': '114', 'coordinates': [(0, 5), (0, 6), (0, 7)]},
+            {'number': '35', 'coordinates': [(2, 2), (2, 3)]},
+            {'number': '633', 'coordinates': [(2, 6), (2, 7), (2, 8)]},
+            {'number': '617', 'coordinates': [(4, 0), (4, 1), (4, 2)]},
+            {'number': '58', 'coordinates': [(5, 7), (5, 8)]},
+            {'number': '592', 'coordinates': [(6, 2), (6, 3), (6, 4)]},
+            {'number': '755', 'coordinates': [(7, 6), (7, 7), (7, 8)]},
+            {'number': '664', 'coordinates': [(9, 1), (9, 2), (9, 3)]},
+            {'number': '598', 'coordinates': [(9, 5), (9, 6), (9, 7)]}
         ]
+        symbol_coordinates = [(1, 3), (3, 6), (4, 3), (5, 5), (8, 3), (8, 5)]
+
         expected_result = [
-            {1: [[{'BLUE': 3, 'GREEN': 0, 'RED': 4}],
-                 [{'BLUE': 6, 'GREEN': 2, 'RED': 1}],
-                 [{'BLUE': 0, 'GREEN': 2, 'RED': 0}]]},
-            {2: [[{'BLUE': 1, 'GREEN': 2, 'RED': 0}],
-                 [{'BLUE': 4, 'GREEN': 3, 'RED': 1}],
-                 [{'BLUE': 1, 'GREEN': 1, 'RED': 0}]]}
+            {'number': '467', 'coordinates': [(0, 0), (0, 1), (0, 2)]},
+            {'number': '35', 'coordinates': [(2, 2), (2, 3)]},
+            {'number': '633', 'coordinates': [(2, 6), (2, 7), (2, 8)]},
+            {'number': '617', 'coordinates': [(4, 0), (4, 1), (4, 2)]},
+            {'number': '592', 'coordinates': [(6, 2), (6, 3), (6, 4)]},
+            {'number': '755', 'coordinates': [(7, 6), (7, 7), (7, 8)]},
+            {'number': '664', 'coordinates': [(9, 1), (9, 2), (9, 3)]},
+            {'number': '598', 'coordinates': [(9, 5), (9, 6), (9, 7)]}
         ]
-        color_limits = {Colors.BLUE.name: 30, Colors.GREEN.name: 12, Colors.RED.name: 20}
-        game_result = verify_results(games_data, color_limits)
-        self.assertEqual(game_result, expected_result)
 
-    def test_impossible_games(self):
-        games_data = [
-            {1: [
-                [{Colors.BLUE.name: 3, Colors.GREEN.name: 0, Colors.RED.name: 4}],
-                [{Colors.BLUE.name: 6, Colors.GREEN.name: 2, Colors.RED.name: 1}],
-                [{Colors.BLUE.name: 0, Colors.GREEN.name: 2, Colors.RED.name: 21}]]},
-            {2: [
-                [{Colors.BLUE.name: 1, Colors.GREEN.name: 2, Colors.RED.name: 0}],
-                [{Colors.BLUE.name: 4, Colors.GREEN.name: 3, Colors.RED.name: 1}],
-                [{Colors.BLUE.name: 1, Colors.GREEN.name: 1, Colors.RED.name: 0}]]}
+        result = check_adjacency_for_numbers_with_coordinates(numbers_with_coordinates, symbol_coordinates)
+
+        self.assertEqual(expected_result, result)
+
+    def test_add_qualified_numbers(self):
+        expected_result = 2017
+        numbers_with_coordinates = [
+            {'number': '755', 'coordinates': [(7, 6), (7, 7), (7, 8)]},
+            {'number': '664', 'coordinates': [(9, 1), (9, 2), (9, 3)]},
+            {'number': '598', 'coordinates': [(9, 5), (9, 6), (9, 7)]}
         ]
-        expected_result = [
-            {2: [[{'BLUE': 1, 'GREEN': 2, 'RED': 0}],
-                 [{'BLUE': 4, 'GREEN': 3, 'RED': 1}],
-                 [{'BLUE': 1, 'GREEN': 1, 'RED': 0}]]}
-        ]
-        color_limits = {Colors.BLUE.name: 30, Colors.GREEN.name: 12, Colors.RED.name: 20}
-        game_result = verify_results(games_data, color_limits)
-        self.assertEqual(game_result, expected_result)
 
-    def test_calculate_minimal_colors(self):
-        game_data = {1:
-            [
-                [{Colors.BLUE.name: 6, Colors.GREEN.name: 8, Colors.RED.name: 20}],
-                [{Colors.BLUE.name: 5, Colors.GREEN.name: 13, Colors.RED.name: 4}],
-                [{Colors.BLUE.name: 0, Colors.GREEN.name: 5, Colors.RED.name: 1}]
-            ]}
-        expected_result = {Colors.BLUE.name: 6, Colors.GREEN.name: 13, Colors.RED.name: 20}
-        game_result = calculate_minimum_colors(game_data)
-        self.assertEqual(expected_result, game_result)
+        result = add_qualified_numbers(numbers_with_coordinates)
 
-    def test_calculate_game_power(self):
-        game_data = {1:
-            [
-                [{Colors.BLUE.name: 6, Colors.GREEN.name: 8, Colors.RED.name: 20}],
-                [{Colors.BLUE.name: 5, Colors.GREEN.name: 13, Colors.RED.name: 4}],
-                [{Colors.BLUE.name: 0, Colors.GREEN.name: 5, Colors.RED.name: 1}]
-            ]}
-        expected_result = 1560
-        game_result = calculate_game_power(game_data)
-        self.assertEqual(expected_result, game_result)
+        self.assertEqual(expected_result, result)
 
 
 if __name__ == '__main__':

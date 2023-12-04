@@ -1,76 +1,62 @@
-
-
-def verify_result(input_game_data, input_color_limits):
+def check_symbol_adjacency(input_coordinates, input_symbol_coordinates):
     """
-    Checks if any game in the provided game data exceeds the specified color limits.
+        Checks if any digit of the number is adjacent to any of the symbol coordinates in the list.
 
-    :param input_game_data: A dictionary containing game results.
-    :param input_color_limits: A dictionary with color limits.
-    :return: True if all games are within limits, False otherwise.
+        :param input_coordinates: Coordinates of each digit of the number (list of tuples).
+        :param input_symbol_coordinates: List of coordinates to check against (list of tuples).
+        :return: True if adjacent, False otherwise.
+        """
+    for number_with_coordinates in input_coordinates:
+        for coordinate in input_symbol_coordinates:
+            if (abs(number_with_coordinates[0] - coordinate[0]) <= 1
+                    and abs(number_with_coordinates[1] - coordinate[1]) <= 1):
+                return True
+    return False
+
+
+def check_adjacency_for_number_with_coordinates(input_number_with_coordinates, input_symbol_coordinates):
     """
-    for game_rounds in input_game_data.values():
-        for game_round in game_rounds:
-            for color_result in game_round:
-                for color, score in color_result.items():
-                    if score > input_color_limits[color]:
-                        return False
-    return True
+    Checks if any digit of the number is adjacent to any of the coordinates in the list.
+
+    :param input_number_with_coordinates: NumberWithCoordinates object.
+    :param input_symbol_coordinates: List of coordinates to check against (list of tuples).
+    :return: True if adjacent, False otherwise.
+    """
+    # Extracting the coordinates from the NumberWithCoordinates object
+    number_coordinates = input_number_with_coordinates['coordinates']
+
+    # Using the extracted coordinates to call check_symbol_adjacency
+    return check_symbol_adjacency(number_coordinates, input_symbol_coordinates)
 
 
-def verify_results(input_games_data, input_color_limits):
-    valid_games = []
+def check_adjacency_for_numbers_with_coordinates(input_numbers_with_coordinates, input_symbol_coordinates):
+    """
+    Checks if any digit of the number is adjacent to any of the coordinates in the list.
 
-    for game_data in input_games_data:
-        if verify_result(game_data, input_color_limits):
-            valid_games.append(game_data)
+    :param input_numbers_with_coordinates: NumberWithCoordinates object.
+    :param input_symbol_coordinates: List of coordinates to check against (list of tuples).
+    :return: True if adjacent, False otherwise.
+    """
+    return_numbers_with_coordinates = []
 
-    return valid_games
+    for number_with_coordinates in input_numbers_with_coordinates:
+        if check_adjacency_for_number_with_coordinates(number_with_coordinates, input_symbol_coordinates):
+            return_numbers_with_coordinates.append(number_with_coordinates)
 
-
-def extract_round_number(input_game_data):
-    round_number = next(iter(input_game_data))
-    return round_number
-
-
-def extract_round_numbers(input_games_data):
-    round_numbers = []
-
-    for game_data in input_games_data:
-        round_numbers.append(extract_round_number(game_data))
-
-    return round_numbers
+    return return_numbers_with_coordinates
 
 
-def add_round_numbers(input_round_numbers):
-    total = 0
-    for number in input_round_numbers:
-        total = total + number
-    return total
+def add_qualified_numbers(input_numbers_with_coordinates):
+    """
+    Adds up the numbers represented as strings in a list of dictionaries.
+
+    :param input_numbers_with_coordinates: List of dictionaries with 'number' as a string and 'coordinates'.
+    :return: Total sum of the numbers as an integer.
+    """
+    total_sum = 0
+    for number_with_coordinates in input_numbers_with_coordinates:
+        number = int(number_with_coordinates['number'])
+        total_sum += number
+    return total_sum
 
 
-def calculate_minimum_colors(input_game_data):
-    minimal_color_amounts = {Colors.RED.name: 0, Colors.GREEN.name: 0, Colors.BLUE.name: 0}
-
-    for game_rounds in input_game_data.values():
-        for game_round in game_rounds:
-            for color_score in game_round:
-                for color, score in color_score.items():
-                    if score > minimal_color_amounts[color]:
-                        minimal_color_amounts[color] = score
-
-    return minimal_color_amounts
-
-
-def calculate_game_power(input_game_data):
-    minimum_colors = calculate_minimum_colors(input_game_data)
-    power = minimum_colors[Colors.BLUE.name] * minimum_colors[Colors.RED.name] * minimum_colors[Colors.GREEN.name]
-
-    return power
-
-
-def calculate_total_game_power(input_games_data):
-    total_power = 0
-    for game_data in input_games_data:
-        total_power += calculate_game_power(game_data)
-
-    return total_power
