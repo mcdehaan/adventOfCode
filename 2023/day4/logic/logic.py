@@ -55,3 +55,92 @@ def calculate_total_score(input_cards):
         total_score += score
 
     return total_score
+
+
+def calculate_copies(input_cards):
+    """
+    Calculates the copies of cards won.
+
+    This function calculates the rewarded copies cards and returns it in the dictionary.
+
+    :param input_cards: List of dictionaries.
+    :return: The rewarded copies cards as list of dictionaries.
+    """
+    return_cards = []
+    for input_card in input_cards:
+
+        card_number = input_card['card']
+        winning_numbers = input_card['winning_numbers']
+        actual_numbers = input_card['actual_numbers']
+
+        duplicate_numbers_amount = count_duplicate_numbers(winning_numbers, actual_numbers)
+        copies_list = []
+
+        for i in range(duplicate_numbers_amount):
+            copies_list.append(card_number + i + 1)
+
+        return_card = {
+            'card': card_number,
+            'winning_numbers': winning_numbers,
+            'actual_numbers': actual_numbers,
+            'copies': copies_list
+        }
+
+        return_cards.append(return_card)
+
+    return return_cards
+
+
+def calculate_instances(input_cards):
+    """
+    Calculates the instances of each card.
+
+    This function calculates the instances of each card and returns it in the dictionary.
+
+    :param input_cards: List of dictionaries.
+    :return: The total number of all cards and copies.
+    """
+
+    return_cards = []
+    all_copies = []
+    for input_card in input_cards:
+        for copy in input_card['copies']:
+            all_copies.append(copy)
+    print(f"\nAll copies: {sorted(all_copies)}")
+
+    sorted_input_cards = sorted(input_cards, key=lambda k: k['card'])
+
+    for input_card in sorted_input_cards:
+
+        card_number = input_card['card']
+        winning_numbers = input_card['winning_numbers']
+        actual_numbers = input_card['actual_numbers']
+        copies_list = input_card['copies']
+
+        instances = 1
+
+        for copy in all_copies:
+            if copy == card_number:
+                instances += 1
+
+        if instances > 1:
+            multiplied_copies = copies_list * (instances - 1)
+            for copy in multiplied_copies:
+                all_copies.append(copy)
+
+        print(f"\nAll Copies: {all_copies}")
+
+        return_card = {
+            'card': card_number,
+            'winning_numbers': winning_numbers,
+            'actual_numbers': actual_numbers,
+            'copies': copies_list,
+            'instances': instances
+        }
+
+        return_cards.append(return_card)
+        print(f"\nreturn_card: \n{return_card}")
+
+    all_cards = len(input_cards) + len(all_copies)
+
+    return all_cards
