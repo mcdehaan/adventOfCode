@@ -1,14 +1,25 @@
 import unittest
 
-from file_reader import read_seeds_from_file, read_maps_from_file
+from file_reader import read_seeds_from_file, read_maps_from_file, read_seed_ranges_from_file
 from map_aggregator.map_aggregator import get_map_data
 
 
 class TestFileReaderFunctions(unittest.TestCase):
 
-    def test_parse_seeds(self):
+    def test_read_seeds_from_file(self):
         expected_result = {'seeds': [79, 14, 55, 13]}
         result = read_seeds_from_file('./test_input.txt')
+        self.assertEqual(expected_result, result)
+
+    def test_read_seed_ranges_from_file(self):
+        expected_result = (
+            {
+                'data': [
+                    {'range': 14, 'seed_number': 79},
+                    {'range': 13, 'seed_number': 55}],
+                'name': 'seeds'
+            })
+        result = read_seed_ranges_from_file('./test_input.txt')
         self.assertEqual(expected_result, result)
 
     def test_read_maps_from_file(self):

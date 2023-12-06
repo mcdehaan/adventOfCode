@@ -198,3 +198,24 @@ def iterate_seeds_trough_maps(existing_maps, seed_values):
         print(f"\nResult values: \n{result_values}")
 
     return result_values
+
+
+def list_all_seeds(seed_data):
+    """
+    Processes each seed and its range in the seed data.
+
+    :param seed_data: Dictionary containing seed data.
+    :return: List seeds.
+    """
+    seed_list = []
+    print(f"\nSeed data: {seed_data}\n")
+    for seed_info in seed_data['data']:
+        seed_number = seed_info['seed_number']
+        seed_range = seed_info['range']
+
+        # Process each seed here
+        print(f"Processing seed number {seed_number} with range {seed_range}")
+        for i in range(seed_range):
+            seed_list.append(seed_number + i)
+
+    return seed_list

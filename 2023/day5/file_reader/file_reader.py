@@ -13,6 +13,22 @@ def read_seeds_from_file(file_path):
         return {key: numbers}
 
 
+def read_seed_ranges_from_file(file_path):
+    with open(file_path, 'r') as file:
+        first_line = file.readline().strip()  # Read the first line and strip any leading/trailing whitespace
+
+        parts = first_line.split(': ')
+        name = parts[0]
+        numbers = [int(num) for num in parts[1].split()]
+
+        # Pairing the numbers and adding them to a list
+        data = []
+        for i in range(0, len(numbers), 2):
+            data.append({'seed_number': numbers[i], 'range': numbers[i + 1]})
+
+        return {'name': name, 'data': data}
+
+
 def read_maps_from_file(file_path):
     maps = []
     current_map = {}
