@@ -1,4 +1,8 @@
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor, as_completed
+import os, time
+
+from file_reader.file_reader import add_int_to_file, read_int_from_file
+
 
 def get_map_data(input_maps, input_map_title):
     """
@@ -154,7 +158,7 @@ def process_source_values_async(existing_map, source_values):
         for future in as_completed(future_to_source):
             completed_tasks += 1
             progress = (completed_tasks / total_tasks) * 100
-            print(f"Progress: {completed_tasks}/{total_tasks} values processed ({progress:.2f}%)")
+            # print(f"Progress: {completed_tasks}/{total_tasks} values processed ({progress:.2f}%)")
             destination_values.append(future.result())
 
     return destination_values
@@ -163,7 +167,7 @@ def process_source_values_async(existing_map, source_values):
 def process_map(map_order_item, expanded_maps, seed_values):
     position = map_order_item['position']
     name = map_order_item['name']
-    print(f"\nProcessing map: {position}: {name}")
+    # print(f"\nProcessing map: {position}: {name}")
 
     current_map = next((map for map in expanded_maps if map['map'] == name), None)
     if current_map is not None:
@@ -189,33 +193,182 @@ def iterate_seeds_trough_maps(existing_maps, seed_values):
     for order in map_order:
         position = order['position']
         name = order['name']
-        print("\n--------------------------------------------")
-        print(f"Processing map: \n{position}: {name}")
+        # print("\n--------------------------------------------")
+        # print(f"Processing map: \n{position}: {name}")
 
         # Find the map by name in the existing_maps list
         current_map = next((map for map in existing_maps if map['map'] == name), None)
         result_values = process_source_values_async(current_map, result_values)
-        print(f"\nResult values: \n{result_values}")
+        # print(f"\nResult values: \n{result_values}")
 
     return result_values
 
 
+def process_seed(seed_number, seed_range):
+    # Same implementation as before
+    return [seed_number + i for i in range(seed_range)]
+
+
+def save_to_file(filename, data):
+    """
+    Saves data to a file. Data can be a single integer or a list of integers.
+
+    :param filename: Name of the file.
+    :param data: Data to be saved (single integer or list of integers).
+    """
+    with open(filename, 'w') as file:
+        if isinstance(data, int):
+            file.write(str(data) + '\n')
+        else:
+            file.write(' '.join(map(str, data)) + '\n')
+
+
+def process_seed_batch(seed_number, start, end):
+    """
+    Processes a batch of seeds and returns the range.
+
+    :param seed_number: The starting seed number.
+    :param start: The start index of the batch.
+    :param end: The end index of the batch.
+    :return: List of numbers for the given seed batch.
+    """
+    return [seed_number + i for i in range(start, end)]
+
+
 def list_all_seeds(seed_data):
+    filenames = []
+    with ThreadPoolExecutor() as executor:
+        futures = []
+        total_batches = sum((seed_info['range'] - 1) // 10000 + 1 for seed_info in seed_data['data'])
+        prep_batch_counter = 0
+        process_batch_counter = 0
+
+        for seed_info in seed_data['data']:
+            seed_number = seed_info['seed_number']
+            seed_range = seed_info['range']
+
+            # Splitting the range into batches
+            for start in range(0, seed_range, 10000):
+                end = min(start + 10000, seed_range)
+                prep_batch_counter += 1
+                progress = (prep_batch_counter / total_batches) * 100
+                print(f"Preparing batches: {progress:.2f}%")
+                batch_future = executor.submit(process_seed_batch, seed_number, start, end)
+                futures.append(batch_future)
+
+        for future in as_completed(futures):
+            process_batch_counter += 1
+            progress = (process_batch_counter / total_batches) * 100
+            print(f"Batch processing progress: {progress:.2f}%")
+
+            # Saving the result to a file
+            seed_result = future.result()
+            filename = f"seed_files/seed_{seed_result[0]}_batch_{seed_result[0] + len(seed_result) - 1}.txt"
+            save_to_file(filename, seed_result)
+            filenames.append(filename)
+
+
+def process_seeds_file(filename, existing_maps):
     """
-    Processes each seed and its range in the seed data.
+    Processes a single seed file.
 
-    :param seed_data: Dictionary containing seed data.
-    :return: List seeds.
+    :param filename: The file containing seed numbers.
+    :param existing_maps: The maps to be used for processing.
+    :return: The lowest result from the processed seeds.
     """
-    seed_list = []
-    print(f"\nSeed data: {seed_data}\n")
-    for seed_info in seed_data['data']:
-        seed_number = seed_info['seed_number']
-        seed_range = seed_info['range']
+    with open(filename, 'r') as file:
+        seeds = [int(seed) for seed in file.read().split()]
 
-        # Process each seed here
-        print(f"Processing seed number {seed_number} with range {seed_range}")
-        for i in range(seed_range):
-            seed_list.append(seed_number + i)
+    lowest_result = float('inf')
+    for seed in seeds:
+        result = iterate_seeds_trough_maps(existing_maps, [seed])
+        lowest_result = min(lowest_result, min(result))
 
-    return seed_list
+    return lowest_result
+
+
+def run_process_seeds_files_parallel(start_index, number_of_files_to_process, file_list, existing_maps):
+    """
+    Executes process_seeds_file on multiple threads in parallel.
+
+    :param start_index: The index of the first file to process.
+    :param number_of_files_to_process: Total number of files to process.
+    :param file_list: List of files to process.
+    :param existing_maps: The maps to be used for processing.
+    :param max_threads: Maximum number of threads to use.
+    """
+    # Calculate the end index and limit the file list
+    end_index = min(start_index + number_of_files_to_process, len(file_list))
+    limited_file_list = file_list[start_index:end_index]
+
+    with ProcessPoolExecutor() as executor:
+        # Submit tasks for the limited file list
+        future_to_file = {executor.submit(process_seeds_file, f"seed_files/{file}", existing_maps): file for file in
+                          limited_file_list}
+
+        results = []
+        completed_tasks = 0
+        for future in as_completed(future_to_file):
+            # Wait for the future to complete and get the result
+            result = future.result()
+            results.append(result)
+            completed_tasks += 1
+            progress = (completed_tasks / len(limited_file_list)) * 100
+            print(f"Progress: {completed_tasks}/{len(limited_file_list)} files processed ({progress:.2f}%)")
+
+    print(f"Results: {results}, Start index: {start_index}, End index: {end_index}")
+    return min(results)
+
+
+def process_all_seed_files(seed_files_directory, existing_maps):
+    lowest_results = []
+    futures_to_files = {}
+
+    with ProcessPoolExecutor() as executor:
+        # Initialize a counter for the number of files submitted for processing
+        submitted_files = 0
+        total_files = len([f for f in os.listdir(seed_files_directory) if f.endswith(".txt")])
+
+        # Submitting file processing tasks to the executor
+        for filename in os.listdir(seed_files_directory):
+            if filename.endswith(".txt"):
+                full_path = os.path.join(seed_files_directory, filename)
+                future = executor.submit(process_seeds_file, full_path, existing_maps)
+                futures_to_files[future] = filename
+                submitted_files += 1
+                print(f"Submitted {submitted_files}/{total_files} files for processing")
+
+        completed_tasks = 0
+        for future in as_completed(futures_to_files):
+            completed_tasks += 1
+            progress = (completed_tasks / total_files) * 100
+            print(f"Progress: {completed_tasks}/{total_files} files processed ({progress:.2f}%)")
+
+            # Getting the result and the corresponding filename
+            lowest_result = future.result()
+            lowest_results.append(lowest_result)
+
+    return lowest_results
+
+
+def list_filenames(directory):
+    """
+    Lists all filenames in a specified directory.
+
+    :param directory: The directory to list filenames from.
+    :return: List of filenames.
+    """
+    return [filename for filename in os.listdir(directory) if os.path.isfile(os.path.join(directory, filename))]
+
+
+def start_timer(interval_seconds):
+    """
+    Starts a timer that displays the elapsed time in the console.
+
+    :param interval_seconds: The interval in seconds at which to display the elapsed time.
+    """
+    start_time = time.time()
+    while True:
+        elapsed_time = time.time() - start_time
+        print(f"Timer: {elapsed_time:.2f} seconds", end="\r", flush=True)
+        time.sleep(interval_seconds)
