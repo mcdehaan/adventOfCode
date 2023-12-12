@@ -29,7 +29,7 @@ if __name__ == '__main__':
     file_list = list_filenames(seed_files_path)
     all_maps = read_maps_from_file(input_file_path)
     print(f"Total seeds file list: {len(file_list)}")
-    lowest_results = run_process_seeds_files_parallel(196230, len(file_list), file_list, all_maps)
+    lowest_results = run_process_seeds_files_parallel(237230, len(file_list), file_list, all_maps)
     current_lowest_result = read_all_ints_and_find_min('lowest_results.txt')
     print(f"Current lowest result: {current_lowest_result}")
     print(f"Lowest result found: {lowest_results}")
