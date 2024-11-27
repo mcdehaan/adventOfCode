@@ -1,0 +1,11 @@
+{
+  "name": "hello-world-test",
+  "version": "1.0.0",
+  "description": "Testing hello world function",
+  "scripts": {
+    "test": "bun test"
+  },
+  "devDependencies": {
+    "bun-types": "latest"
+  }
+}
