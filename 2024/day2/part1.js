@@ -1,4 +1,4 @@
-import { readTextFile } from '../day1/fileReader.js';
+import { readTextFile } from './fileReader.js';
 import { parseNumberArrays } from './numberParser.js';
 import { checkSequences } from './sequenceChecker.js';
 
